@@ -19,10 +19,10 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-from utils import (DEVICE_SERIAL_NO,
-                   MRIQC_SERVER,
-                   RELEVANT_KEYS,
-                   )
+from .utils import (DEVICE_SERIAL_NO,
+                    MRIQC_SERVER,
+                    RELEVANT_KEYS,
+                    )
 
 
 def get_month_number(month):

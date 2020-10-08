@@ -6,10 +6,10 @@ from pathlib import Path
 import pandas as pd
 from mriqc.reports import group_html
 
-from local_mriqc_stats import (read_iqms,
-                               find_similar_iqms,
-                               save_iqms_to_tsv,
-                               )
+from .local_mriqc_stats import (read_iqms,
+                                find_similar_iqms,
+                                save_iqms_to_tsv,
+                                )
 
 
 def plot_iqms_from_tsv(iqms_tsv, out_html):
