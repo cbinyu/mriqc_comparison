@@ -23,6 +23,6 @@ pip install mriqc_comparison
 
 ## Dependencies ##
 
-- [mriqc](https://github.com/poldracklab/mriqc)
+- [mriqc](https://github.com/poldracklab/mriqc) (>= 0.13.0)
 - [pandas](https://pandas.pydata.org) (>= 0.25.0)
 - [numpy](https://numpy.org) (>= 1.17.1)

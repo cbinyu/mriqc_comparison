@@ -22,7 +22,7 @@ PYTHON_REQUIRES = ">=3.6"
 REQUIRES = [
     'pandas >= 0.25.0',
     'numpy >= 1.17.1',
-    'mriqc >= 0.15',
+    'mriqc >= 0.13.0',
 ]
 
 TESTS_REQUIRES = [
