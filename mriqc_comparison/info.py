@@ -10,7 +10,7 @@ __longdesc__ = """Tool to compare MRIQC Image Quality Metrics (IQMs) across BIDS
 CLASSIFIERS = [
     'Environment :: Console',
     'Intended Audience :: Science/Research',
-    'License :: OSI Approved :: BSD 3-Clause License',
+    'License :: OSI Approved :: BSD License',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',

@@ -25,6 +25,7 @@ def main():
         name=ldict['__packagename__'],
         author=ldict['__author__'],
         author_email=ldict['__author_email__'],
+        url=ldict['__url__'],
         version=ldict['__version__'],
         description=ldict['__description__'],
         long_description=ldict['__longdesc__'],
