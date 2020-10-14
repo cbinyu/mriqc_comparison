@@ -26,3 +26,34 @@ pip install mriqc_comparison
 - [mriqc](https://github.com/poldracklab/mriqc) (>= 0.13.0)
 - [pandas](https://pandas.pydata.org) (>= 0.25.0)
 - [numpy](https://numpy.org) (>= 1.17.1)
+
+
+## Usage ##
+
+To download the IQMs corresponding to a given center, year and modality:
+
+```python
+from mriqc_comparison import local_mriqc_stats
+iqms = local_mriqc_stats.get_device_iqms(modality, year=year, month='', device_serial_no=dev_sn)
+```
+where `modality = ['T1w', 'T2w', 'bold']`, `year` is the desired year or `'current'` and `dev_sn` is the scanner serial number (you can find your scanner SN in one of the json files in the mriqc output folder, under the key `"DeviceSerialNumber"`)
+
+Then, you can drop duplicate entries:
+
+```python
+iqms.drop_duplicates(subset=['provenance.md5sum'], inplace=True)
+```
+You can save all the `iqms` in a json file (so that you don't need to query the server again):
+
+```python
+local_mriqc_stats.save_iqms_to_json_file(iqms, iqms_json_file)
+```
+Where `iqms_json_file` is the path to the file where you want to save the data.
+
+If you have a dataframe with your own iqms which you want to compare to all other iqms that you have downloaded from the server:
+
+```python
+from mriqc_comparison import plots
+plots.report_comparison_w_similar(my_iqms, center_iqms, comparison_report_html)
+```
+Where `my_iqms` is the dataframe or json file with your iqms, `center_iqms` is the dataframe or json file with the iqms for your center (or any other iqms you want to compare to) and `comparison_report_html` in the output html file with the report.
