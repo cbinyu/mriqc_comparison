@@ -22,6 +22,7 @@ import numpy as np
 from .utils import (DEVICE_SERIAL_NO,
                     MRIQC_SERVER,
                     RELEVANT_KEYS,
+                    read_mriqc_json,
                     )
 
 
@@ -75,6 +76,7 @@ def get_device_iqms(modality, month='current', year='current', device_serial_no=
         Options: "T1w", "T2w", "bold"
     month : int or str
     year : int or str
+        Desired year, or "current"
     device_serial_no : str
         Serial number of the device for which we want to query the
         database
@@ -199,20 +201,7 @@ def read_iqms(path):
                 iqms = pd.read_json(path_or_buf=path, orient='split')
             except ValueError:
                 # read it as mriqc does (mriqc/reports/individual.py):
-                with path.open() as jsonfile:
-                    iqms_dict = json.load(jsonfile)
-
-                # Extract and prune metadata and provenance:
-                metadata = iqms_dict.pop("bids_meta", None)
-                _ = metadata.pop("global", None)     # don't want this
-                for key, value in metadata.items():
-                    iqms_dict['bids_meta.' + key] = value
-                prov = iqms_dict.pop("provenance", None)
-                for key in 'md5sum', 'software', 'version':
-                    iqms_dict['provenance.' + key] = prov[key]
-
-                # dict -> DataFrame, return as a row (".T"):
-                iqms = pd.DataFrame.from_dict(iqms_dict, orient='index').T
+                iqms = read_mriqc_json(path)
         else:
             # read it as table:
             iqms = pd.read_table(path)

@@ -27,8 +27,8 @@ DISCARD_KEYS = [
 
 MRIQC_SERVER = 'mriqc.nimh.nih.gov'
 
-# REPOSITORY_PATH = Path('/BIDS/CBI/mriqc/local_stats')
-REPOSITORY_PATH = Path.home() / 'data/scratch/mriqc/local_stats'
+REPOSITORY_PATH = Path('/BIDS/CBI/mriqc/local_stats')
+#REPOSITORY_PATH = Path.home() / 'data/scratch/mriqc/local_stats'
 
 DEFAULT_T1_PROTOCOL = {
     'size_x': 240,    # no. slices
@@ -75,3 +75,38 @@ DEFAULT_BOLD_PROTOCOL = {
 #    'bids_meta.ReceiveCoilName': 'HeadNeck_64',
 #    'bids_meta.RepetitionTime': 1.3,
 }
+
+
+def read_mriqc_json(file):
+    """
+    Reads an MRIQC-generated json
+    (https://github.com/poldracklab/mriqc/blob/b7bb3a381212ef5bb380b9531fde87dcb4b85254/mriqc/reports/individual.py#L62)
+    Parameters
+    ----------
+    file : Path or str
+        Path of the json file or directory with the iqms
+
+    Returns
+    -------
+    iqms : pd.DataFrame
+        IQMs from file
+    """
+    import json
+    import pandas as pd
+
+    with Path(file).open() as json_file:
+        iqms_dict = json.load(json_file)
+
+    # Extract and prune metadata and provenance:
+    metadata = iqms_dict.pop("bids_meta", None)
+    _ = metadata.pop("global", None)  # don't want this
+    for key, value in metadata.items():
+        iqms_dict['bids_meta.' + key] = value
+    prov = iqms_dict.pop("provenance", None)
+    for key in 'md5sum', 'software', 'version':
+        iqms_dict['provenance.' + key] = prov[key]
+
+    # dict -> DataFrame, return as a row (".T"):
+    iqms = pd.DataFrame.from_dict(iqms_dict, orient='index').T
+
+    return iqms
