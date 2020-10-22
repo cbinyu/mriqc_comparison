@@ -34,7 +34,7 @@ To download the IQMs corresponding to a given center, year and modality:
 
 ```python
 from mriqc_comparison import local_mriqc_stats
-iqms = local_mriqc_stats.get_device_iqms(modality, year=year, month='', device_serial_no=dev_sn)
+iqms = local_mriqc_stats.get_device_iqms_from_server(modality, year=year, month='', device_serial_no=dev_sn)
 ```
 where `modality = ['T1w', 'T2w', 'bold']`, `year` is the desired year or `'current'` and `dev_sn` is the scanner serial number (you can find your scanner SN in one of the json files in the mriqc output folder, under the key `"DeviceSerialNumber"`)
 

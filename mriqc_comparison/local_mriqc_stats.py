@@ -65,7 +65,7 @@ def get_month_number(month):
     return n_month
 
 
-def get_device_iqms(modality, month='current', year='current', device_serial_no=None, versions=None):
+def get_device_iqms_from_server(modality, month='current', year='current', device_serial_no=None, versions=None):
     """
     Grab all iqms for the given modality and device, for a given month/year
 
@@ -119,14 +119,14 @@ def get_device_iqms(modality, month='current', year='current', device_serial_no=
     else:
         begin_date = datetime(year, n_month, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
         if n_month < 12:
-            end_date = datetime(year, n_month+1, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
+            end_date = datetime(year, n_month + 1, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
         else:   # December:
-            end_date = datetime(year+1, 1, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
+            end_date = datetime(year + 1, 1, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
     base_query.append(
         '"_updated":{{"$gte":"{begin_d}", "$lte":"{end_d}"}}'.format(
-                                                                 begin_d=begin_date,
-                                                                 end_d=end_date
-                                                              )
+            begin_d=begin_date,
+            end_d=end_date
+        )
     )
 
     dfs = []
@@ -141,8 +141,8 @@ def get_device_iqms(modality, month='current', year='current', device_serial_no=
             page_url = url_root.format(
                 modality=modality,
                 query='where={{{where}}}&page={page}'.format(
-                                                    where=','.join(query),
-                                                    page=page
+                    where=','.join(query),
+                    page=page
                 )
             )
             print(page_url)
