@@ -179,21 +179,26 @@ def read_iqms(path):
     Read the iqms from a file or folder
     Parameters
     ----------
-    path : Path or str
+    path : list or Path or str
         Path of the json file or directory with the iqms
     Returns
     -------
+    iqms : pd.DataFrame
         DataFrame with the iqms
     """
-    if Path(path).is_dir():
-        # load all the json files in the folder:
+
+    if isinstance(path, list):
+        # read iqms from all items into a single DataFrame:
         iqms = pd.DataFrame()
-        for f in Path(path).rglob('*.json'):
-            this_iqms = read_iqms(f)
+        for p in path:
+            this_iqms = read_iqms(p)
             iqms = pd.concat([iqms, this_iqms], ignore_index=True)
         iqms.drop_duplicates(subset=['provenance.md5sum'],
                              inplace=True,
                              keep='last')
+    elif Path(path).is_dir():
+        # read all the json files in the folder:
+        iqms = read_iqms(list(Path(path).rglob('*.json')))
     elif Path(path).is_file():
         if str(path).endswith(".json"):
             # try to read as "normal" json:
