@@ -1,9 +1,19 @@
 # mriqc_comparison
 Compare your MRIQC results with other similar runs
 
+#### Example ####
+To compare the [MRIQC](https://github.com/poldracklab/mriqc) Image Quality Metrics (IQMs) of subject `01` for a study with the IQMS of all other runs with comparable acquisition parameters collected in the same scanner since `2018`: 
+```python
+from mriqc_comparison.bids import bids_mriqc_comparison
+bids_mriqc_comparison(mriqc_reports="My/Mriqc/Output/Folder",
+                      subject="01",
+                      year_init=2018)
+```
+A series of new html files with the comparisons for the different image modality will be created in the `mriqc_reports` input folder.
+
 ## About ##
 
-This is a tool that allows you to compare [MRIQC](https://github.com/poldracklab/mriqc) Image Quality Metrics (IQMs) corresponding to certain runs with IQMs from other runs collected with similar parameters (so that the comparison is meaningful). For example, it allows you to compare the IQMs for your runs with all the other runs collected in the same scanner; or to compare your IQMs with those from a different scanner.
+`mriqc_comparison` is a tool that allows you to compare [MRIQC](https://github.com/poldracklab/mriqc) Image Quality Metrics (IQMs) corresponding to certain runs with IQMs from other runs collected with similar parameters (so that the comparison is meaningful). For example, it allows you to compare the IQMs for your runs with all the other runs collected in the same scanner; or to compare your IQMs with those from a different scanner.
 
 [MRIQC](https://github.com/poldracklab/mriqc) does give you the option to generate a report comparing the IQMs for all runs in a given BIDS project. However, it does not allow you to compare IQMs across your projects, or with a colleague's data. This tool comes in to fill that gap.
 
