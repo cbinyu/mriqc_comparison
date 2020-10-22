@@ -99,7 +99,7 @@ def report_comparison_w_similar(sample_iqms, iqms_set, report_html):
 
     Parameters
     ----------
-    sample_iqms: DataFrame or str or Path
+    sample_iqms: pd.DataFrame or str or Path
         the iqms we want to compare
     iqms_set: DataFrame or str or Path
         full set of iqms in which to find similar runs
@@ -107,9 +107,9 @@ def report_comparison_w_similar(sample_iqms, iqms_set, report_html):
         file where to write the report
     """
 
-    if isinstance(sample_iqms, str) or isinstance(sample_iqms, Path):
+    if not isinstance(sample_iqms, pd.DataFrame):
         sample_iqms = read_iqms(sample_iqms)
-    if isinstance(iqms_set, str) or isinstance(iqms_set, Path):
+    if not isinstance(iqms_set, pd.DataFrame):
         iqms_set = read_iqms(iqms_set)
 
     # remove any columns not present in both DataFrames (there's no
@@ -132,6 +132,7 @@ def report_comparison_w_similar(sample_iqms, iqms_set, report_html):
     similar_iqms['bids_name'] = 'foo'
 
     # write DataFrame to 'tsv' file
+    report_html = str(report_html)
     if not report_html.endswith('.html'):
         report_html += '.html'
     report_base = str(report_html).split('.html')[0]
