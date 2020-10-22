@@ -20,6 +20,7 @@ import pandas as pd
 import numpy as np
 
 from .utils import (DEVICE_SERIAL_NO,
+                    REPOSITORY_PATH,
                     MRIQC_SERVER,
                     RELEVANT_KEYS,
                     read_mriqc_json,
@@ -120,7 +121,7 @@ def get_device_iqms_from_server(modality, month='current', year='current', devic
         begin_date = datetime(year, n_month, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
         if n_month < 12:
             end_date = datetime(year, n_month + 1, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
-        else:   # December:
+        else:  # December:
             end_date = datetime(year + 1, 1, 1).strftime('%a, %d %b %Y %H:%M:%S GMT')
     base_query.append(
         '"_updated":{{"$gte":"{begin_d}", "$lte":"{end_d}"}}'.format(
@@ -211,8 +212,91 @@ def read_iqms(path):
             # read it as table:
             iqms = pd.read_table(path)
     else:
-        raise(RuntimeError, 'Wrong argument')
+        raise (RuntimeError, 'Wrong argument')
 
+    return iqms
+
+
+def download_and_save(modality, year, local_iqms_repository_folder, device_serial_no):
+    """
+    Download iqms from server and save to a file.
+
+    Parameters
+    ----------
+    modality : str
+        Imaging modality.
+        Options: "T1w", "T2w", "bold"
+    year : int or str
+        Desired year, or "current"
+    local_iqms_repository_folder : str or Path
+        Path to the folder with the repository of iqms
+    device_serial_no : str
+        Serial number of the device for which we want to query the
+        database
+
+    Returns
+    -------
+    iqms : pd.DataFrame
+        IQMs downloaded from server
+    """
+
+    if not local_iqms_repository_folder:
+        local_iqms_repository_folder = REPOSITORY_PATH
+    if not device_serial_no:
+        device_serial_no = DEVICE_SERIAL_NO
+
+    iqms = get_device_iqms_from_server(modality,
+                                       year=year,
+                                       month='',
+                                       device_serial_no=device_serial_no)
+    iqms.drop_duplicates(subset=['provenance.md5sum'], inplace=True)
+    save_iqms_to_json_file(iqms, local_iqms_repository_folder / (
+            str(year) + '_' + modality + ".json"))
+    return iqms
+
+
+def get_iqms_all_years(modality, year_init, local_iqms_repository_folder, device_serial_no):
+    """
+    Gets iqms for all the years, for a given modality.
+    If they are not present in the local repository, it queries the MRIQC API
+    server, downloads them and saves them to the local repository.
+
+    Parameters
+    ----------
+    modality : str
+        Imaging modality.
+        Options: "T1w", "T2w", "bold"
+    year_init : str or int
+        Initial year since which to get data (Default: current - 2)
+    local_iqms_repository_folder : str or Path
+        Path to the folder with the repository of iqms
+    device_serial_no : str
+        Serial number of the device for which we want to query the
+        database
+
+    Returns
+    -------
+    iqms : pd.DataFrame
+        IQMs for a given modality, for all years
+    """
+
+    if not year_init:
+        year_init = datetime.today().year - 2
+    elif int(year_init) > datetime.today().year:
+        raise RuntimeError('"year_init" cannot be greater than current year.')
+
+    iqms = pd.DataFrame()
+    for year in range(int(year_init), datetime.today().year + 1):
+        try:
+            # Try to read from file:
+            this_iqms = read_iqms(
+                local_iqms_repository_folder / (str(year) + '_' + modality + ".json")
+            )
+        except FileNotFoundError:
+            this_iqms = download_and_save(modality, year, local_iqms_repository_folder, device_serial_no)
+        iqms = pd.concat([iqms, this_iqms], ignore_index=True)
+    # drop duplicates:
+    iqms.drop_duplicates(subset=['provenance.md5sum'], inplace=True)
     return iqms
 
 
