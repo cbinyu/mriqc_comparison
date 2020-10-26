@@ -10,7 +10,7 @@ ARG DEBIAN_VERSION=buster
 FROM poldracklab/mriqc:${MRIQC_VERSION} as builder
 
 # Install mriqc_comparison
-RUN pip install mriqc_comparison
+RUN pip install mriqc_comparison>=1.0
 
 # Get rid of unneeded folders:
 # (They are not needed for our APP):
