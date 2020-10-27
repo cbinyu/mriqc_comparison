@@ -211,8 +211,11 @@ def read_iqms(path):
         else:
             # read it as table:
             iqms = pd.read_table(path)
+    elif str(path).endswith(".json"):
+        # it's a json file name, but the file does not exist:
+        raise FileNotFoundError('File {} does not exist'.format(str(path)))
     else:
-        raise (RuntimeError, 'Wrong argument')
+        raise RuntimeError('Wrong argument')
 
     return iqms
 
