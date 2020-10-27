@@ -10,7 +10,11 @@ ARG DEBIAN_VERSION=buster
 FROM poldracklab/mriqc:${MRIQC_VERSION} as builder
 
 # Install mriqc_comparison
-RUN pip install mriqc_comparison>=1.0
+RUN pip install mriqc_comparison>=1.1
+#COPY [".", "/tmp/mriqc_comparison"]
+#RUN cd /tmp/mriqc_comparison && \
+#    pip install . && \
+#    cd / && rm -rf /tmp/mriqc_comparison
 
 # Get rid of unneeded folders:
 # (They are not needed for our APP):
@@ -63,5 +67,5 @@ ENV APP_PYTHON_LIB_PATH=/usr/local/lib/python${BASE_PYTHON_VERSION}
 COPY --from=builder ./${BASE_PYTHON_LIB_PATH}/       ${APP_PYTHON_LIB_PATH}/
 COPY --from=builder ./usr/local/bin/           /usr/local/bin/
 
-ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/bin/bash"]
 
