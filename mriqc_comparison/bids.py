@@ -33,9 +33,9 @@ def bids_mriqc_comparison(mriqc_reports,
     if session:
         target_folder = target_folder / ('ses-' + session)
     jsons = {
-        'T1w': list((target_folder / 'anat').rglob('*T1w.json')),
-        'T2w': list((target_folder / 'anat').rglob('*T2w.json')),
-        'bold': list((target_folder / 'func').rglob('*_bold.json'))
+        'T1w': list((target_folder / 'anat').rglob('sub-*T1w.json')),
+        'T2w': list((target_folder / 'anat').rglob('sub-*T2w.json')),
+        'bold': list((target_folder / 'func').rglob('sub-*_bold.json'))
     }
     # bold_folder = target_folder / 'func'
 
